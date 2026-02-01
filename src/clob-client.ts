@@ -81,11 +81,28 @@ export async function placeOrderStub(
         return { success: false, message: `Market bulunamadı (token_id: ${tokenId}). Polymarket'te bu piyasa artık yok veya geçersiz olabilir.` };
       }
     }
-    const resp = (await client.createAndPostOrder(
-      { tokenID: tokenId, price: priceSafe, size: sizeShares, side: orderSide },
-      { tickSize, negRisk },
-      OrderType.GTC
-    )) as { success?: boolean; errorMsg?: string; orderID?: string; status?: string };
+    const maxRetries = 3;
+    let lastErr: unknown;
+    let resp: { success?: boolean; errorMsg?: string; orderID?: string; status?: string } | null = null;
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        resp = (await client.createAndPostOrder(
+          { tokenID: tokenId, price: priceSafe, size: sizeShares, side: orderSide },
+          { tickSize, negRisk },
+          OrderType.GTC
+        )) as { success?: boolean; errorMsg?: string; orderID?: string; status?: string };
+        break;
+      } catch (e) {
+        lastErr = e;
+        const status = (e as { response?: { status?: number } })?.response?.status;
+        if (typeof status === "number" && status >= 500 && status < 600 && attempt < maxRetries - 1) {
+          await new Promise((r) => setTimeout(r, 2000 * (attempt + 1)));
+          continue;
+        }
+        throw e;
+      }
+    }
+    if (!resp) throw lastErr;
     if (resp && resp.success === false) {
       const raw = resp.errorMsg;
       const errMsg = typeof raw === "string" ? raw : (raw != null ? String(raw) : "Order rejected");
