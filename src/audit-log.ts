@@ -7,12 +7,14 @@ import { join } from "path";
 const ROOT = process.cwd();
 const LOGS_DIR = join(ROOT, "logs");
 const AUDIT_PATH = join(LOGS_DIR, "audit.log");
+export const IS_VERCEL = process.env.VERCEL === "1";
 
 function ensureLogsDir(): void {
   if (!existsSync(LOGS_DIR)) mkdirSync(LOGS_DIR, { recursive: true });
 }
 
 export function appendToAudit(action: string, details: Record<string, unknown> = {}): void {
+  if (IS_VERCEL) return;
   ensureLogsDir();
   const entry = {
     ts: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
@@ -23,7 +25,7 @@ export function appendToAudit(action: string, details: Record<string, unknown> =
 }
 
 export function readAuditLog(limit = 200, actionFilter?: string, actionSet?: Set<string>): Array<{ ts: string; action: string; details: Record<string, unknown> }> {
-  if (!existsSync(AUDIT_PATH)) return [];
+  if (IS_VERCEL || !existsSync(AUDIT_PATH)) return [];
   const out: Array<{ ts: string; action: string; details: Record<string, unknown> }> = [];
   try {
     const content = readFileSync(AUDIT_PATH, "utf-8");

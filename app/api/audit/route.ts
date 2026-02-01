@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readAuditLog, AUTO_LOG_ACTIONS } from "../../../src/audit-log";
+import { readAuditLog, AUTO_LOG_ACTIONS, IS_VERCEL } from "../../../src/audit-log";
 
 function auth(req: Request): boolean {
   const secret = process.env.WEB_ADMIN_SECRET;
@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
     const group = req.nextUrl.searchParams.get("group") ?? undefined;
     const actionSet = group === "auto" ? AUTO_LOG_ACTIONS : undefined;
     const data = readAuditLog(limit, action, actionSet);
+    if (group === "auto" && IS_VERCEL) return NextResponse.json({ entries: data, isVercel: true });
     return NextResponse.json(data);
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });

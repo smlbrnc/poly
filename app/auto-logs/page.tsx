@@ -36,11 +36,18 @@ function actionColor(action: string): string {
 export default function AutoLogsPage() {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [config, setConfig] = useState<{ TRIGGER_MODE?: string; EXECUTION_MODE?: string } | null>(null);
+  const [isVercel, setIsVercel] = useState(false);
 
   const load = () => {
     fetch("/api/audit?group=auto&limit=150")
       .then((r) => r.json())
-      .then((d) => Array.isArray(d) && setEntries(d));
+      .then((d) => {
+        if (Array.isArray(d)) setEntries(d);
+        else if (d?.entries) {
+          setEntries(d.entries);
+          if (d.isVercel) setIsVercel(true);
+        }
+      });
     fetch("/api/execution-mode", { method: "GET" })
       .then((r) => r.ok ? r.json() : null)
       .then((d) => d && setConfig({ TRIGGER_MODE: d.TRIGGER_MODE, EXECUTION_MODE: d.EXECUTION_MODE }));
@@ -75,7 +82,13 @@ export default function AutoLogsPage() {
           </li>
         ))}
       </ul>
-      {entries.length === 0 && <p style={{ color: "#71717a", marginTop: "1rem" }}>Henüz otomatik işlem logu yok. Tetikleyici Otomatik ve pipeline çalışıyorsa burada kayıtlar görünür.</p>}
+      {entries.length === 0 && (
+        <p style={{ color: "#71717a", marginTop: "1rem" }}>
+          {isVercel
+            ? "Vercel'de pipeline çalışmaz; otomatik loglar sadece pipeline'ın çalıştığı ortamda (local veya ayrı worker) görünür."
+            : "Henüz otomatik işlem logu yok. Tetikleyici Otomatik ve pipeline çalışıyorsa burada kayıtlar görünür."}
+        </p>
+      )}
     </div>
   );
 }
