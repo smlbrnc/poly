@@ -69,7 +69,7 @@ export async function placeOrderStub(
     const { Side, OrderType } = await import("@polymarket/clob-client");
     const orderSide = side === "BUY" ? Side.BUY : Side.SELL;
     const priceSafe = Math.max(0.001, Math.min(0.999, price));
-    const sizeShares = Math.max(1, Math.floor(sizeUsd / priceSafe));
+    const sizeShares = Math.max(5, Math.floor(sizeUsd / priceSafe)); // Polymarket min 5 pay
     let tickSize: TickSize = "0.001";
     let negRisk = false;
     try {
