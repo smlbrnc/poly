@@ -1,0 +1,8 @@
+{
+  "/manual-queue/page": "app/manual-queue/page.js",
+  "/api/manual-queue/route": "app/api/manual-queue/route.js",
+  "/api/pipeline-runs/route": "app/api/pipeline-runs/route.js",
+  "/config/page": "app/config/page.js",
+  "/api/config/route": "app/api/config/route.js",
+  "/api/execution-mode/route": "app/api/execution-mode/route.js"
+}

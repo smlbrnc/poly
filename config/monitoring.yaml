@@ -1,0 +1,17 @@
+# İzleme — SOP §2.8
+# Metrikler ve alert eşikleri
+
+metrics:
+  - opportunities_count
+  - executions_count
+  - execution_success_rate
+  - total_pnl
+  - drawdown_pct
+  - avg_latency_ms
+
+alerts:
+  drawdown_pct_gt: 15
+  execution_rate_lt: 30
+  ip_timeout_spike: false
+  fill_failure_spike: false
+  # E-posta: .env'de RESEND_API_KEY, RESEND_FROM, RESEND_TO tanımlıysa uyarılar Resend ile gönderilir

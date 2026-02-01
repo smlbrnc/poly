@@ -1,0 +1,8 @@
+# Optimizasyon Layer 1 (LCMM) — SOP §2.4
+# Kısıtlar: olasılıklar toplamı 1, implication bounds; arbitraj var/yok
+
+solver: "scipy"
+timeout_seconds: 0.1
+constraints:
+  - sum_probabilities_one
+  - implication_probability_bounds

@@ -1,0 +1,42 @@
+{
+  "name": "polymarket-arbitrage-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "pipeline": "npx tsx src/scripts/run-pipeline.ts",
+    "pipeline:loop": "npx tsx src/scripts/run-pipeline-loop.ts",
+    "dashboard": "next dev",
+    "dashboard:build": "next build",
+    "dashboard:start": "next start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@polymarket/clob-client": "^5.2.1",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^25.1.0",
+    "dotenv": "^17.2.3",
+    "ethers": "^6.16.0",
+    "javascript-lp-solver": "^1.0.3",
+    "js-yaml": "^4.1.1",
+    "next": "^14.2.35",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "recharts": "^3.7.0",
+    "resend": "^6.9.1",
+    "typescript": "^5.9.3",
+    "ws": "^8.19.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.10",
+    "@types/react-dom": "^19.2.3",
+    "@types/ws": "^8.18.1",
+    "tsx": "^4.21.0"
+  }
+}

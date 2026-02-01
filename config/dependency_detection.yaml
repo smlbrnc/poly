@@ -1,0 +1,14 @@
+# Bağımlılık tespiti — SOP-Kurulum §2.3
+# LLM: 2 piyasa + koşul açıklamaları → geçerli sonuç kombinasyonları (JSON)
+
+llm:
+  provider: "gemini"
+  model: "gemini-2.0-flash"
+  temperature: 0.2
+  max_tokens: 1024
+
+validation:
+  require_single_true_per_outcome: true
+  dependency_threshold_combinations_lt_nm: true
+
+manual_review_queue: "data/manual_review_queue.json"

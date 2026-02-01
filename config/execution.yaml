@@ -1,0 +1,12 @@
+# Execution modülü — SOP §2.7
+# Paralel bacak, timeout, pozisyon büyüklüğü (OB %50 cap)
+
+order_submission:
+  parallel_legs: true
+  leg_timeout_seconds: 5
+  max_position_pct_of_orderbook_depth: 50
+
+position_sizing:
+  method: "cap_pct"  # cap_pct | modified_kelly
+  cap_pct_of_depth: 50
+  execution_probability_from_orderbook: false  # true ile OB'den tahmin

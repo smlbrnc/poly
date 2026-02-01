@@ -1,0 +1,25 @@
+"use strict";
+/*
+ * ATTENTION: An "eval-source-map" devtool has been used.
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file with attached SourceMaps in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+exports.id = "vendor-chunks/browser-or-node";
+exports.ids = ["vendor-chunks/browser-or-node"];
+exports.modules = {
+
+/***/ "(rsc)/./node_modules/browser-or-node/lib/index.js":
+/*!***************************************************!*\
+  !*** ./node_modules/browser-or-node/lib/index.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+eval("\n\nObject.defineProperty(exports, \"__esModule\", ({\n  value: true\n}));\n\nvar _typeof = typeof Symbol === \"function\" && typeof Symbol.iterator === \"symbol\" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === \"function\" && obj.constructor === Symbol && obj !== Symbol.prototype ? \"symbol\" : typeof obj; };\n\nvar isBrowser = typeof window !== \"undefined\" && typeof window.document !== \"undefined\";\n\nvar isNode = typeof process !== \"undefined\" && process.versions != null && process.versions.node != null;\n\nvar isWebWorker = (typeof self === \"undefined\" ? \"undefined\" : _typeof(self)) === \"object\" && self.constructor && self.constructor.name === \"DedicatedWorkerGlobalScope\";\n\n/**\n * @see https://github.com/jsdom/jsdom/releases/tag/12.0.0\n * @see https://github.com/jsdom/jsdom/issues/1537\n */\nvar isJsDom = typeof window !== \"undefined\" && window.name === \"nodejs\" || typeof navigator !== \"undefined\" && (navigator.userAgent.includes(\"Node.js\") || navigator.userAgent.includes(\"jsdom\"));\n\nvar isDeno = typeof Deno !== \"undefined\" && typeof Deno.version !== \"undefined\" && typeof Deno.version.deno !== \"undefined\";\n\nexports.isBrowser = isBrowser;\nexports.isWebWorker = isWebWorker;\nexports.isNode = isNode;\nexports.isJsDom = isJsDom;\nexports.isDeno = isDeno;//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKHJzYykvLi9ub2RlX21vZHVsZXMvYnJvd3Nlci1vci1ub2RlL2xpYi9pbmRleC5qcyIsIm1hcHBpbmdzIjoiQUFBYTs7QUFFYiw4Q0FBNkM7QUFDN0M7QUFDQSxDQUFDLEVBQUM7O0FBRUYscUdBQXFHLHFCQUFxQixtQkFBbUI7O0FBRTdJOztBQUVBOztBQUVBOztBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7O0FBRUE7O0FBRUEsaUJBQWlCO0FBQ2pCLG1CQUFtQjtBQUNuQixjQUFjO0FBQ2QsZUFBZTtBQUNmLGNBQWMiLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9wb2x5bWFya2V0LWFyYml0cmFnZS1ub2RlLy4vbm9kZV9tb2R1bGVzL2Jyb3dzZXItb3Itbm9kZS9saWIvaW5kZXguanM/YzUyNyJdLCJzb3VyY2VzQ29udGVudCI6WyJcInVzZSBzdHJpY3RcIjtcblxuT2JqZWN0LmRlZmluZVByb3BlcnR5KGV4cG9ydHMsIFwiX19lc01vZHVsZVwiLCB7XG4gIHZhbHVlOiB0cnVlXG59KTtcblxudmFyIF90eXBlb2YgPSB0eXBlb2YgU3ltYm9sID09PSBcImZ1bmN0aW9uXCIgJiYgdHlwZW9mIFN5bWJvbC5pdGVyYXRvciA9PT0gXCJzeW1ib2xcIiA/IGZ1bmN0aW9uIChvYmopIHsgcmV0dXJuIHR5cGVvZiBvYmo7IH0gOiBmdW5jdGlvbiAob2JqKSB7IHJldHVybiBvYmogJiYgdHlwZW9mIFN5bWJvbCA9PT0gXCJmdW5jdGlvblwiICYmIG9iai5jb25zdHJ1Y3RvciA9PT0gU3ltYm9sICYmIG9iaiAhPT0gU3ltYm9sLnByb3RvdHlwZSA/IFwic3ltYm9sXCIgOiB0eXBlb2Ygb2JqOyB9O1xuXG52YXIgaXNCcm93c2VyID0gdHlwZW9mIHdpbmRvdyAhPT0gXCJ1bmRlZmluZWRcIiAmJiB0eXBlb2Ygd2luZG93LmRvY3VtZW50ICE9PSBcInVuZGVmaW5lZFwiO1xuXG52YXIgaXNOb2RlID0gdHlwZW9mIHByb2Nlc3MgIT09IFwidW5kZWZpbmVkXCIgJiYgcHJvY2Vzcy52ZXJzaW9ucyAhPSBudWxsICYmIHByb2Nlc3MudmVyc2lvbnMubm9kZSAhPSBudWxsO1xuXG52YXIgaXNXZWJXb3JrZXIgPSAodHlwZW9mIHNlbGYgPT09IFwidW5kZWZpbmVkXCIgPyBcInVuZGVmaW5lZFwiIDogX3R5cGVvZihzZWxmKSkgPT09IFwib2JqZWN0XCIgJiYgc2VsZi5jb25zdHJ1Y3RvciAmJiBzZWxmLmNvbnN0cnVjdG9yLm5hbWUgPT09IFwiRGVkaWNhdGVkV29ya2VyR2xvYmFsU2NvcGVcIjtcblxuLyoqXG4gKiBAc2VlIGh0dHBzOi8vZ2l0aHViLmNvbS9qc2RvbS9qc2RvbS9yZWxlYXNlcy90YWcvMTIuMC4wXG4gKiBAc2VlIGh0dHBzOi8vZ2l0aHViLmNvbS9qc2RvbS9qc2RvbS9pc3N1ZXMvMTUzN1xuICovXG52YXIgaXNKc0RvbSA9IHR5cGVvZiB3aW5kb3cgIT09IFwidW5kZWZpbmVkXCIgJiYgd2luZG93Lm5hbWUgPT09IFwibm9kZWpzXCIgfHwgdHlwZW9mIG5hdmlnYXRvciAhPT0gXCJ1bmRlZmluZWRcIiAmJiAobmF2aWdhdG9yLnVzZXJBZ2VudC5pbmNsdWRlcyhcIk5vZGUuanNcIikgfHwgbmF2aWdhdG9yLnVzZXJBZ2VudC5pbmNsdWRlcyhcImpzZG9tXCIpKTtcblxudmFyIGlzRGVubyA9IHR5cGVvZiBEZW5vICE9PSBcInVuZGVmaW5lZFwiICYmIHR5cGVvZiBEZW5vLnZlcnNpb24gIT09IFwidW5kZWZpbmVkXCIgJiYgdHlwZW9mIERlbm8udmVyc2lvbi5kZW5vICE9PSBcInVuZGVmaW5lZFwiO1xuXG5leHBvcnRzLmlzQnJvd3NlciA9IGlzQnJvd3NlcjtcbmV4cG9ydHMuaXNXZWJXb3JrZXIgPSBpc1dlYldvcmtlcjtcbmV4cG9ydHMuaXNOb2RlID0gaXNOb2RlO1xuZXhwb3J0cy5pc0pzRG9tID0gaXNKc0RvbTtcbmV4cG9ydHMuaXNEZW5vID0gaXNEZW5vOyJdLCJuYW1lcyI6W10sInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///(rsc)/./node_modules/browser-or-node/lib/index.js\n");
+
+/***/ })
+
+};
+;

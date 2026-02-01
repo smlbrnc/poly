@@ -1,0 +1,18 @@
+# Kripto varlıklar — Ana kapsam (proje kripto için kullanılır)
+# BTC, ETH, SOL vb. izleme/kontrol. İleride exchange API entegrasyonu bu sembollere göre yapılır.
+
+assets:
+  - symbol: BTC
+    name: Bitcoin
+    decimals: 8
+    # exchange_symbol: BTCUSDT  # opsiyonel
+  - symbol: ETH
+    name: Ethereum
+    decimals: 18
+  - symbol: SOL
+    name: Solana
+    decimals: 9
+
+# İleride: fiyat kaynağı (RPC, exchange API), cüzdan/hesap limitleri
+# price_source: exchange | rpc
+# allowed_exchanges: []

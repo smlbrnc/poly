@@ -1,0 +1,9 @@
+# Execution validation (Layer 3) — SOP §2.6
+# Min marj, VWAP simülasyonu, slippage
+
+min_profit_margin_usd: 0.05
+min_liquidity_per_leg_usd: 100
+max_slippage_pct: 2.0
+vwap:
+  use_orderbook_levels: true
+  max_levels: 10

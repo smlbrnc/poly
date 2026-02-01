@@ -1,0 +1,10 @@
+.env
+.env.local
+.env.*.local
+node_modules/
+dist/
+logs/
+*.log
+data/*.json
+!data/.gitkeep
+config/execution_mode.json

@@ -1,0 +1,27 @@
+# Veri hattı — SOP-Kurulum §2.2
+# .env'deki BUFFER_MINUTES, BUFFER_MAX_MB override edebilir
+
+websocket:
+  url: "wss://ws-subscriptions-clob.polymarket.com/ws/market"
+  reconnect_delay_min: 1
+  reconnect_delay_max: 60
+  reconnect_max_attempts: 5
+  ping_interval_sec: 10
+
+buffer:
+  minutes: 10
+  max_mb: 500
+
+alchemy:
+  rate_limit_rpm: 300
+  # Free plan (Polygon): eth_getLogs max 10 blok/istek; 950 blok = 95 istek
+  max_blocks_per_request: 10
+  contract_address: "0x4D97DCd97eC945f40cF65F87097ACe5EA0476045"
+  events:
+    - OrderFilled
+    - PositionSplit
+    - PositionsMerge
+
+# Makale: ilişkili işlemler ~950 blok (~1 saat); Free planda parçalı istek gerekir
+time_window_blocks: 950
+time_window_hours_approx: 1

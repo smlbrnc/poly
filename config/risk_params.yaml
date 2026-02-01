@@ -1,0 +1,6 @@
+min_profit_margin_usd: 0.05
+min_liquidity_per_leg_usd: 100
+ref_size_usd: 100
+max_position_usd: 5000
+max_drawdown_pct: 15
+max_slippage_pct: 2
