@@ -20,6 +20,17 @@ async function marketExists(baseUrl: string, tokenId: string): Promise<boolean> 
   }
 }
 
+/** Orderbook yoksa emir atmadan döner; "orderbook does not exist" hatası ve kütüphane log'u önlenir. */
+async function orderbookExists(baseUrl: string, tokenId: string): Promise<boolean> {
+  const url = `${baseUrl.replace(/\/$/, "")}/book?token_id=${encodeURIComponent(tokenId)}`;
+  try {
+    const res = await fetch(url);
+    return res.ok;
+  } catch {
+    return true;
+  }
+}
+
 export async function getClient(env: Record<string, string>): Promise<ClobClientType | null> {
   const apiKey = env.POLYMARKET_API_KEY;
   const apiSecret = env.POLYMARKET_API_SECRET;
@@ -57,6 +68,9 @@ export async function placeOrderStub(
   const baseUrl = env.POLYMARKET_CLOB_API_URL || "https://clob.polymarket.com";
   if (!(await marketExists(baseUrl, tokenId))) {
     return { success: false, message: `Market bulunamadı (token_id: ${tokenId}). Polymarket'te bu piyasa artık yok veya geçersiz olabilir.` };
+  }
+  if (!(await orderbookExists(baseUrl, tokenId))) {
+    return { success: false, message: "Piyasa artık mevcut değil (orderbook yok)." };
   }
   const client = await getClient(env);
   if (!client)
@@ -118,8 +132,11 @@ export async function placeOrderStub(
     const err = e as { response?: { data?: { error?: string }; status?: number }; message?: string };
     const apiErr = err.response?.data?.error;
     let msg: string;
-    if (typeof apiErr === "string") msg = apiErr;
-    else if (err.response?.status === 404) msg = "Market bulunamadı. Piyasa kapatılmış veya geçersiz olabilir.";
+    if (typeof apiErr === "string") {
+      if (/orderbook.*does not exist/i.test(apiErr)) msg = "Piyasa artık mevcut değil (orderbook yok).";
+      else if (/not enough balance|allowance/i.test(apiErr)) msg = "Yetersiz bakiye veya USDC allowance.";
+      else msg = apiErr;
+    } else if (err.response?.status === 404) msg = "Market bulunamadı. Piyasa kapatılmış veya geçersiz olabilir.";
     else if (e instanceof Error && e.message) {
       msg = e.message.includes("undefined") && e.message.includes("toString")
         ? "Polymarket API geçersiz yanıt döndü (market bulunamadı veya piyasa kapalı)."

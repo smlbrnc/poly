@@ -27,6 +27,8 @@ export async function PATCH(req: NextRequest) {
     if (body.monitoring_alerts) saveMonitoringAlerts(body.monitoring_alerts);
     return NextResponse.json({ ok: true });
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    const msg = e instanceof Error ? e.message : String(e);
+    const status = msg.includes("Vercel") ? 501 : 500;
+    return NextResponse.json({ error: msg }, { status });
   }
 }

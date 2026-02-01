@@ -28,6 +28,8 @@ export async function POST(req: Request) {
     const data = setMode(mode !== undefined ? String(mode) : undefined, dryRun, triggerMode);
     return NextResponse.json(data);
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    const msg = e instanceof Error ? e.message : String(e);
+    const status = msg.includes("Vercel") ? 501 : 500;
+    return NextResponse.json({ error: msg }, { status });
   }
 }

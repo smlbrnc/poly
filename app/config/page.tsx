@@ -6,6 +6,7 @@ export default function ConfigPage() {
   const [risk, setRisk] = useState<Record<string, unknown>>({});
   const [mode, setMode] = useState<Record<string, unknown>>({});
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -20,23 +21,33 @@ export default function ConfigPage() {
 
   const saveRisk = async () => {
     setSaving(true);
-    await fetch("/api/config", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ risk_params: risk }) });
+    setError(null);
+    const res = await fetch("/api/config", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ risk_params: risk }) });
+    const data = await res.json().catch(() => ({}));
     setSaving(false);
+    if (!res.ok) setError(data.error || "Kayıt başarısız.");
   };
 
   const setExecutionMode = async (value: string) => {
-    await fetch("/api/execution-mode", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mode: value }) });
-    setMode((m) => ({ ...m, EXECUTION_MODE: value }));
+    setError(null);
+    const res = await fetch("/api/execution-mode", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mode: value }) });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) setError(data.error || "Mod güncellenemedi.");
+    else setMode((m) => ({ ...m, EXECUTION_MODE: value }));
   };
 
   const setTriggerMode = async (value: string) => {
-    await fetch("/api/execution-mode", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trigger_mode: value }) });
-    setMode((m) => ({ ...m, TRIGGER_MODE: value }));
+    setError(null);
+    const res = await fetch("/api/execution-mode", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trigger_mode: value }) });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) setError(data.error || "Mod güncellenemedi.");
+    else setMode((m) => ({ ...m, TRIGGER_MODE: value }));
   };
 
   return (
     <div>
       <h1 style={{ marginBottom: "1rem" }}>Config</h1>
+      {error && <p style={{ color: "#f87171", marginBottom: "1rem", fontSize: "0.875rem" }}>{error}</p>}
       <section style={{ marginBottom: "1.5rem" }}>
         <h2 style={{ fontSize: "1rem", color: "#a1a1aa", marginBottom: "0.5rem" }}>İşlem tetikleyici (SOP §4.6.3)</h2>
         <select
