@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readAuditLog } from "../../../src/audit-log";
+import { readAuditLog, AUTO_LOG_ACTIONS } from "../../../src/audit-log";
 
 function auth(req: Request): boolean {
   const secret = process.env.WEB_ADMIN_SECRET;
@@ -13,7 +13,9 @@ export async function GET(req: NextRequest) {
   try {
     const limit = Math.min(parseInt(req.nextUrl.searchParams.get("limit") ?? "200", 10), 500);
     const action = req.nextUrl.searchParams.get("action") ?? undefined;
-    const data = readAuditLog(limit, action);
+    const group = req.nextUrl.searchParams.get("group") ?? undefined;
+    const actionSet = group === "auto" ? AUTO_LOG_ACTIONS : undefined;
+    const data = readAuditLog(limit, action, actionSet);
     return NextResponse.json(data);
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });

@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as queue from "../../../src/manual-review-queue.js";
-import { loadYaml, loadEnv } from "../../../src/config.js";
 import { getMode } from "../../../src/execution-mode.js";
-import { passesExecutionValidation } from "../../../src/execution-validation.js";
-import { submitOrders } from "../../../src/order-submission.js";
-import { recordExecution } from "../../../src/monitoring.js";
-import { appendToAudit } from "../../../src/audit-log.js";
+import { executeQueueItem } from "../../../src/order-execution.js";
 
 function auth(req: Request): boolean {
   const secret = process.env.WEB_ADMIN_SECRET;
@@ -40,41 +36,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, action: "reopen" });
     }
     if (action === "approve" && typeof id === "number") {
-      const items = queue.getAll();
-      const item = items.find((x) => x.id === id);
-      if (!item || item.status !== "pending") {
-        return NextResponse.json({ error: "Kayıt bulunamadı veya zaten işlendi" }, { status: 404 });
-      }
-      const risk = loadYaml("risk_params") as Record<string, unknown>;
-      const minMarginUsd = Number(risk?.min_profit_margin_usd ?? 0.05);
-      const minLiquidityUsd = Number(risk?.min_liquidity_per_leg_usd ?? 100);
-      const refSizeUsd = Number(risk?.ref_size_usd ?? 100);
-      const profitUsd = (1 - Number(item.min_cost ?? 0)) * refSizeUsd;
-      const layer3 = passesExecutionValidation(profitUsd, minLiquidityUsd, minMarginUsd, minLiquidityUsd);
-      if (!layer3.passed) {
-        appendToAudit("queue_approve_layer3_fail", { id, reason: layer3.reason });
-        return NextResponse.json({ ok: false, reason: layer3.reason }, { status: 400 });
+      const result = await executeQueueItem(id, "manual");
+      if (!result.ok) {
+        const status = result.reason?.includes("bulunamadı") ? 404 : 400;
+        return NextResponse.json({ error: result.reason }, { status });
       }
       const mode = getMode();
-      const env = { ...process.env, ...loadEnv() } as Record<string, string>;
-      env.EXECUTION_MODE = mode.EXECUTION_MODE;
-      env.DRY_RUN = mode.DRY_RUN ? "true" : "false";
-      const legs = [
-        { token_id: String(item.market_a_id ?? ""), price: 0.5, side: "BUY" as const },
-        { token_id: String(item.market_b_id ?? ""), price: 0.5, side: "BUY" as const },
-      ];
-      const sizeUsd = 1; // Manuel kuyruktan onayda sabit 1 USD işlem
-      const res = await submitOrders(legs, sizeUsd, env, risk, mode.EXECUTION_MODE);
-      const profitUsd1 = (1 - Number(item.min_cost ?? 0)) * sizeUsd;
-      recordExecution(res.success, res.success ? profitUsd1 : 0, 0);
-      queue.approve(id);
-      appendToAudit("queue_approve_exec", { id, success: res.success, mode: mode.EXECUTION_MODE, message: res.message });
       return NextResponse.json({
         ok: true,
         action: "approve",
         executed: mode.EXECUTION_MODE === "live",
-        success: res.success,
-        message: res.message,
+        success: result.success,
+        message: result.message,
         execution_mode: mode.EXECUTION_MODE,
       });
     }

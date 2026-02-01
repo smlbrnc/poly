@@ -9,6 +9,17 @@ function toTickSize(s: string): TickSize {
   return "0.001";
 }
 
+/** Market yoksa CLOB client çağrılmadan 404 döner; kütüphane log spam'i önlenir. */
+async function marketExists(baseUrl: string, tokenId: string): Promise<boolean> {
+  const url = `${baseUrl.replace(/\/$/, "")}/tick-size?token_id=${encodeURIComponent(tokenId)}`;
+  try {
+    const res = await fetch(url);
+    return res.ok;
+  } catch {
+    return true; // ağ hatası varsa client'a bırak
+  }
+}
+
 export async function getClient(env: Record<string, string>): Promise<ClobClientType | null> {
   const apiKey = env.POLYMARKET_API_KEY;
   const apiSecret = env.POLYMARKET_API_SECRET;
@@ -40,6 +51,13 @@ export async function placeOrderStub(
   sizeUsd: number,
   side: "BUY" | "SELL" = "BUY"
 ): Promise<{ success: boolean; message: string }> {
+  if (!tokenId || String(tokenId).trim() === "") {
+    return { success: false, message: "Token ID eksik veya geçersiz." };
+  }
+  const baseUrl = env.POLYMARKET_CLOB_API_URL || "https://clob.polymarket.com";
+  if (!(await marketExists(baseUrl, tokenId))) {
+    return { success: false, message: `Market bulunamadı (token_id: ${tokenId}). Polymarket'te bu piyasa artık yok veya geçersiz olabilir.` };
+  }
   const client = await getClient(env);
   if (!client)
     return {
@@ -57,8 +75,11 @@ export async function placeOrderStub(
     try {
       tickSize = toTickSize(await client.getTickSize(tokenId));
       negRisk = await client.getNegRisk(tokenId);
-    } catch {
-      // varsayılan
+    } catch (tickErr: unknown) {
+      const ax = tickErr as { response?: { status?: number; data?: { error?: string } } };
+      if (ax.response?.status === 404 || ax.response?.data?.error === "market not found") {
+        return { success: false, message: `Market bulunamadı (token_id: ${tokenId}). Polymarket'te bu piyasa artık yok veya geçersiz olabilir.` };
+      }
     }
     const resp = (await client.createAndPostOrder(
       { tokenID: tokenId, price: priceSafe, size: sizeShares, side: orderSide },
@@ -66,7 +87,8 @@ export async function placeOrderStub(
       OrderType.GTC
     )) as { success?: boolean; errorMsg?: string; orderID?: string; status?: string };
     if (resp && resp.success === false) {
-      const errMsg = resp.errorMsg ?? "Order rejected";
+      const raw = resp.errorMsg;
+      const errMsg = typeof raw === "string" ? raw : (raw != null ? String(raw) : "Order rejected");
       return { success: false, message: errMsg };
     }
     const orderId = resp?.orderID ?? "";
@@ -78,7 +100,14 @@ export async function placeOrderStub(
   } catch (e: unknown) {
     const err = e as { response?: { data?: { error?: string }; status?: number }; message?: string };
     const apiErr = err.response?.data?.error;
-    const msg = apiErr ?? (e instanceof Error ? e.message : String(e));
+    let msg: string;
+    if (typeof apiErr === "string") msg = apiErr;
+    else if (err.response?.status === 404) msg = "Market bulunamadı. Piyasa kapatılmış veya geçersiz olabilir.";
+    else if (e instanceof Error && e.message) {
+      msg = e.message.includes("undefined") && e.message.includes("toString")
+        ? "Polymarket API geçersiz yanıt döndü (market bulunamadı veya piyasa kapalı)."
+        : e.message;
+    } else try { msg = String(e); } catch { msg = "Emir gönderilemedi."; }
     return { success: false, message: msg };
   }
 }

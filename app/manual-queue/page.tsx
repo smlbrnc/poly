@@ -58,7 +58,7 @@ export default function ManualQueuePage() {
     const data = await res.json();
     if (!res.ok && data?.reason) setMessage(`Layer 3 red: ${data.reason}`);
     else if (res.ok && action === "approve") {
-      const msg = data.message ?? "";
+      const msg = data.message != null && typeof data.message === "string" ? data.message : "";
       const isPaper = data.execution_mode === "paper" || /^paper:/i.test(msg);
       if (isPaper) setMessage("Paper modda — gerçek emir gönderilmedi. Polymarket'e düşmesi için Config sayfasından Ortam: Live seçin.");
       else if (!data.success) setMessage(msg ? `Emir reddedildi: ${msg}` : "Emir gönderilemedi.");

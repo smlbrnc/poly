@@ -15,6 +15,8 @@ import { checkArbitrage } from "../optimization-layer1.js";
 import { add } from "../manual-review-queue.js";
 import { recordPipelineRun, recordEvent } from "../monitoring.js";
 import { appendToAudit } from "../audit-log.js";
+import { getMode } from "../execution-mode.js";
+import { executeQueueItem } from "../order-execution.js";
 
 function getBinaryMarkets(event: GammaEvent): GammaMarket[] {
   const out: GammaMarket[] = [];
@@ -154,6 +156,23 @@ async function main(): Promise<void> {
         recordEvent("pipeline_queue_add", { id, asset: g.name, profit_usd: profitUsd });
         appendToAudit("pipeline_queue_add", { id, market_a: String(mA.question).slice(0, 80), profit_usd: profitUsd });
         added++;
+
+        const mode = getMode();
+        if (mode.TRIGGER_MODE === "auto") {
+          appendToAudit("auto_trigger_attempt", { id, asset: g.name, profit_usd: profitUsd });
+          try {
+            const exec = await executeQueueItem(id, "auto");
+            if (exec.ok) {
+              appendToAudit("auto_trigger_done", { id, success: exec.success, message: exec.message });
+            } else {
+              appendToAudit("auto_trigger_fail", { id, reason: exec.reason });
+            }
+          } catch (err) {
+            appendToAudit("auto_trigger_error", { id, err: String(err) });
+          }
+        } else {
+          appendToAudit("auto_trigger_skip", { id, reason: "TRIGGER_MODE=manual" });
+        }
       }
     }
   }

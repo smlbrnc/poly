@@ -10,6 +10,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <a href="/manual-queue" style={{ color: "#a1a1aa" }}>Manuel Kuyruk</a>
           <a href="/alerts" style={{ color: "#a1a1aa" }}>Uyarılar</a>
           <a href="/audit" style={{ color: "#a1a1aa" }}>Audit</a>
+          <a href="/auto-logs" style={{ color: "#a1a1aa" }}>Otomatik Log</a>
           <a href="/polymarket" style={{ color: "#a1a1aa" }}>Polymarket Kripto</a>
         </nav>
         <main style={{ padding: "1.5rem" }}>{children}</main>

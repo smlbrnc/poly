@@ -14,6 +14,16 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/config/page.js"
+    ],
+    "/auto-logs/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/auto-logs/page.js"
+    ],
+    "/alerts/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/alerts/page.js"
     ]
   }
 }

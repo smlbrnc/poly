@@ -1,8 +1,11 @@
 {
-  "/manual-queue/page": "app/manual-queue/page.js",
   "/api/manual-queue/route": "app/api/manual-queue/route.js",
   "/api/pipeline-runs/route": "app/api/pipeline-runs/route.js",
+  "/manual-queue/page": "app/manual-queue/page.js",
   "/config/page": "app/config/page.js",
-  "/api/config/route": "app/api/config/route.js",
-  "/api/execution-mode/route": "app/api/execution-mode/route.js"
+  "/auto-logs/page": "app/auto-logs/page.js",
+  "/api/execution-mode/route": "app/api/execution-mode/route.js",
+  "/alerts/page": "app/alerts/page.js",
+  "/api/audit/route": "app/api/audit/route.js",
+  "/api/alerts/route": "app/api/alerts/route.js"
 }

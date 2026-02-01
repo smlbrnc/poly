@@ -22,7 +22,7 @@ export function appendToAudit(action: string, details: Record<string, unknown> =
   appendFileSync(AUDIT_PATH, JSON.stringify(entry) + "\n", "utf-8");
 }
 
-export function readAuditLog(limit = 200, actionFilter?: string): Array<{ ts: string; action: string; details: Record<string, unknown> }> {
+export function readAuditLog(limit = 200, actionFilter?: string, actionSet?: Set<string>): Array<{ ts: string; action: string; details: Record<string, unknown> }> {
   if (!existsSync(AUDIT_PATH)) return [];
   const out: Array<{ ts: string; action: string; details: Record<string, unknown> }> = [];
   try {
@@ -33,6 +33,7 @@ export function readAuditLog(limit = 200, actionFilter?: string): Array<{ ts: st
       try {
         const entry = JSON.parse(line) as { ts: string; action: string; details?: Record<string, unknown> };
         if (actionFilter && entry.action !== actionFilter) continue;
+        if (actionSet && !actionSet.has(entry.action)) continue;
         out.push({ ts: entry.ts, action: entry.action, details: entry.details ?? {} });
         if (out.length >= limit) break;
       } catch {}
@@ -42,3 +43,9 @@ export function readAuditLog(limit = 200, actionFilter?: string): Array<{ ts: st
     return [];
   }
 }
+
+/** Otomatik işlem logları için kullanılan action listesi */
+export const AUTO_LOG_ACTIONS = new Set([
+  "auto_trigger_attempt", "auto_trigger_done", "auto_trigger_fail", "auto_trigger_skip", "auto_trigger_error",
+  "auto_trigger_exec", "auto_trigger_layer3_fail", "pipeline_queue_add", "queue_approve_exec", "execution_mode_change",
+]);
